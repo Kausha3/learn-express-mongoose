@@ -15,7 +15,7 @@ var AuthorSchema = new Schema(
 AuthorSchema
 .virtual('name')
 .get(function () {
-// To avoid errors in cases where an author does not have either a family name or first name
+// To avoid errors in cases where an author does not have either a family name or firstName
 // We want to make sure we handle the exception by returning an empty string for that case
   var fullname = '';
   if (this.first_name && this.family_name) {
