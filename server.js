@@ -37,10 +37,14 @@ app.get('/home', (_, res) => {
 })
 
 app.get('/available', (_, res) => {
-  Book.find({ status: 'available' })
-    .then(books => {
-      const response = books.map(book => ({ title: book.title, status: book.status }));
-      res.json(response);
+  BookInstance.find({ status: 'Available' })
+    .populate('book')
+    .then(bookInstances => {
+      const availableBooks = bookInstances.map(instance => ({
+        title: instance.book.title,
+        status: instance.status
+      }));
+      res.json(availableBooks);
     })
     .catch(err => {
       console.error(err);
@@ -57,12 +61,11 @@ app.get('/books', (_, res) => {
 app.get('/authors', (_, res) => {
   Author.find({})
     .then(authors => {
-      const response = authors.map(author => {
-        const name = `${author.firstName} ${author.lastName}`;
-        const lifespan = author.deathDate ? `${author.birthDate.getFullYear()} - ${author.deathDate.getFullYear()}` : `${author.birthDate.getFullYear()} - Present`;
-        return { name, lifespan };
-      });
-      res.json(response);
+      const authorDetails = authors.map(author => ({
+        name: author.name,
+        lifespan: author.lifespan
+      }));
+      res.json(authorDetails);
     })
     .catch(err => {
       console.error(err);
