@@ -37,8 +37,16 @@ app.get('/home', (_, res) => {
 })
 
 app.get('/available', (_, res) => {
-  BooksStatus.show_all_books_status(res);
-})
+  Book.find({ status: 'available' })
+    .then(books => {
+      const response = books.map(book => ({ title: book.title, status: book.status }));
+      res.json(response);
+    })
+    .catch(err => {
+      console.error(err);
+      res.status(500).send('Error retrieving available books');
+    });
+});
 
 app.get('/books', (_, res) => {
   Books.show_books()
@@ -47,8 +55,20 @@ app.get('/books', (_, res) => {
 })
 
 app.get('/authors', (_, res) => {
-  Authors.show_all_authors(res);
-})
+  Author.find({})
+    .then(authors => {
+      const response = authors.map(author => {
+        const name = `${author.firstName} ${author.lastName}`;
+        const lifespan = author.deathDate ? `${author.birthDate.getFullYear()} - ${author.deathDate.getFullYear()}` : `${author.birthDate.getFullYear()} - Present`;
+        return { name, lifespan };
+      });
+      res.json(response);
+    })
+    .catch(err => {
+      console.error(err);
+      res.status(500).send('Error retrieving authors');
+    });
+});
 
 app.get('/book_dtls', (req, res) => {
   BookDetails.show_book_dtls(res, req.query.id);
